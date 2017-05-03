@@ -2,16 +2,25 @@
 require_once 'equipo.entidad.php';
 require_once 'equipo.model.php';
 
+// Logica
+$eq = new Cliente();
+$model = new ClienteModel();
 
-$c=mysql_connect("127.0.0.1","root",'');
+$c=mysql_connect("127.0.0.1","root",'123456');
 mysql_select_db("facturador");
 
 $orden1="SELECT * FROM vendedor"; 
 $paquete1=mysql_query($orden1);
 
-// Logica
-$eq = new Cliente();
-$model = new ClienteModel();
+
+if(!empty($_POST))
+{
+    $valor = $_POST['campo'];
+    if(!empty($valor)){
+        $result=$model->ListarC($valor);
+    }
+}
+
 
 if(isset($_REQUEST['action']))
 {
@@ -69,6 +78,16 @@ if(isset($_REQUEST['action']))
 
         <div class="pure-g">
             <div class="pure-u-1-12">
+                <form action="<?php $_SERVER['PHP_SELF']; ?>" method="POST" class="pure-form pure-form-stacked" style="margin-bottom:30px;">
+                    <table style="width:500px;">
+                        <tr>
+                            <th style="text-align:left;"><b>Cliente:</b></th>
+                            <td><input type="text" id="campo" name="campo" style="width:80%;"/></td>
+                            <td><input type="submit" id="enviar" name="enviar" value="BUSCAR" class="btn btn-info" /></td>
+                            <td><a class="btn btn-info" href="http://localhost:8080/facturador/Cliente">LIMPIAR</a></td>
+                        </tr>
+                    </table>                     
+                </form>
                 
                 <form action="?action=<?php echo $eq->id > 0 ? 'actualizar' : 'registrar'; ?>" method="post" class="pure-form pure-form-stacked" style="margin-bottom:30px;">
                     <input type="hidden" name="id" value="<?php echo $eq->__GET('id'); ?>" />
@@ -78,9 +97,9 @@ if(isset($_REQUEST['action']))
                             <th style="text-align:left;"><label>Cliente</label></th>
                             <td>
                             <select id="cliente" style="width:100%;" onChange="document.href = 'index.php?y='+this.value;">
-                                <?php foreach($model->Listar() as $r): ?>
-                                    <option value="<?php echo $r->id; ?>"> <?php echo $r->__GET('Nombre'); ?> </option>
-                                <?php endforeach; ?>   
+                                <?php //foreach($model->Listar() as $r): ?>
+                                    <option value="<?php //echo $r->id; ?>"> <?php// echo $r->__GET('Nombre'); ?> </option>
+                                <?php// endforeach; ?>   
                             </select>
                             </td>
                             <td style="width:10%;">
@@ -105,13 +124,19 @@ if(isset($_REQUEST['action']))
                         </tr>
                          <tr>
                             <th style="text-align:left;">Agente</th>
-                            <td><select name="Agente" class="form-control" type="text" placeholder="Agente"  />
-                                    <option value='0' selected>Agente</option>";
-                                    <?php 
-                                    while ($reg=mysql_fetch_array($paquete1, MYSQL_NUM)) 
-                                    {?> 
-                                    <option value="<?php echo $reg[1]; ?>"> <?php echo $reg[1]; ?> </option>" 
-                                    <?php } ?> 
+                            <td>
+                            <select name="Agente" class="form-control" type="text" placeholder="Agente">
+                                                                      
+                        
+                        <option value="<?php echo $eq->__GET('Agente');?>"> <?php echo $eq->__GET('Agente');?> </option>
+
+                          
+                                        
+                            <?php
+                                while ($reg=mysql_fetch_array($paquete1, MYSQL_NUM)) {?>
+                                <option value="<?php echo $reg[1]; ?>"> <?php echo $reg[1]; ?> </option>
+                                 <?php }?>
+                                  
                             </select></td>
                         </tr>
                         <tr>
@@ -133,7 +158,9 @@ if(isset($_REQUEST['action']))
                         </tr>
                     </thead>
                    
-                    <?php foreach($model->Listar() as $r): ?>
+                    <?php 
+                    if(empty($_POST)){
+                        foreach($model->Listar() as $r): ?>
                         <tr>
                             <td><?php echo $r->__GET('Nombre'); ?></td>
                             <td><?php echo $r->__GET('RUC'); ?></td>
@@ -147,12 +174,28 @@ if(isset($_REQUEST['action']))
                                 <a href="?action=eliminar&id=<?php echo $r->id; ?>">Eliminar</a>
                             </td>
                         </tr>
-                    <?php endforeach; ?>
-                   
+                        <?php endforeach; 
+                    }else{
+                        foreach($result as $r): ?>
+                        <tr>
+                            <td><?php echo $r->__GET('Nombre'); ?></td>
+                            <td><?php echo $r->__GET('RUC'); ?></td>
+                            <td><?php echo $r->__GET('Direccion'); ?></td>
+                            <td><?php echo $r->__GET('Agente'); ?></td>
+                            
+                            <td>
+                                <a href="?action=editar&id=<?php echo $r->id; ?>">Editar</a>
+                            </td>
+                            <td>
+                                <a href="?action=eliminar&id=<?php echo $r->id; ?>">Eliminar</a>
+                            </td>
+                        </tr>
+                        <?php endforeach;     
+                    }?>
+      
                 </table>     
               
             </div>
         </div>
-
     </body>
 </html>

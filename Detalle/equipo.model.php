@@ -7,7 +7,7 @@ class DetalleModel
 	{
 		try
 		{
-			$this->pdo = new PDO('mysql:host=localhost;dbname=detalle_db', 'root', '123456');
+			$this->pdo = new PDO('mysql:host=localhost;dbname=detalle_factmenu', 'root', '123456');
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);		        
 		}
 		catch(Exception $e)

@@ -11,7 +11,7 @@ $fecha2 = new DateTime($comprobante->fecha);
 echo $intervalo ->format('%R%a días')."\n\r";*/
 $intervalo = $fecha1 ->diff($fecha2, true);
 
-
+//var_dump($comprobante);
 
 /*$orden1="SELECT presentacion FROM producto where id= $_GET[id];"; 
 $paquete2=mysql_query($orden1);*/
@@ -28,6 +28,8 @@ $paquete2=mysql_query($orden1);*/
 <a class="btn btn-primary pull-right btn-lg" href="?c=comprobante&a=eliminarF&id=<?php echo $comprobante->id; ?>" onclick="return confirm('¿Está seguro de eliminar este comprobante?');">ELIMINAR FACTURA</a>
 <?php } ?>
 <a class="btn btn-primary pull-left btn-lg" href="?c=Comprobante&a=index">REGRESAR</a>
+<!--<a class="btn btn-primary pull-left btn-lg" href="?c=Comprobante&a=modificar&id=<?php echo $comprobante->id; ?>">MODIFICAR</a>-->
+
 <br>
 <br>
 <br>
@@ -41,21 +43,21 @@ $paquete2=mysql_query($orden1);*/
                         <div class="form-group">
                             <label>Cliente</label>
                             <input name="cliente_id" type="hidden" value="<?php echo $comprobante->Cliente->id; ?>" />
-                            <input type="text" class="form-control" disabled value="<?php echo $comprobante->Cliente->Nombre; ?>" />
+                            <input type="text" class="form-control" disabled value="<?php echo $comprobante->Cliente->name; ?>" />
                         </div>
                     </div>
                     <div class="col-xs-2">
                         <div class="form-group">
                             <label>Telefono</label>
                             <input name="comprob_id" type="hidden" value="<?php echo $comprobante->id; ?>" />
-                            <input type="text" class="form-control" disabled value="<?php echo $comprobante->Cliente->RUC; ?>"  />                    
+                            <input type="text" class="form-control" disabled value="<?php echo $comprobante->Cliente->phone1; ?>"  />                    
                         </div>
                     </div>
                     <div class="col-xs-6">
                         <div class="form-group">
                             <input name="prod_id" type="hidden" value="<?php echo $comprobante->Producto->id; ?>" />
                            <label>Dirección</label>
-                           <input type="text" class="form-control" disabled value="<?php echo $comprobante->Cliente->Direccion; ?>" />                    
+                           <input type="text" class="form-control" disabled value="<?php echo $comprobante->Cliente->address1; ?>" />                    
                         </div>
                     </div>
                 </div>
@@ -72,16 +74,16 @@ $paquete2=mysql_query($orden1);*/
                             <div class="form-group">
                                 <input name="fecV" type="hidden" value="<?php echo $comprobante->fechaVence; ?>" />
                                 <label>Moneda </label>
-                                <input  type="text" name="t" class="form-control" value="<?php echo $comprobante->Moneda; ?>" readonly/>
+                                <input  type="text" name="moneda" class="form-control" value="<?php echo $comprobante->Moneda; ?>" readonly/>
                             </div>
                         </div>
                         <div class="col-xs-2">
                             <div class="form-group">
                                 <label>Plazo </label>
-                                <input  type="text" name="pz" class="form-control" value="<?php echo $intervalo ->format('%R%a');?>" readonly />
+                                <input  type="text" name="pz" class="form-control" value="<?php echo $intervalo->format('%R%a');?>" readonly />
                             </div>
                         </div>
-                        <?php if($comprobante->estado === 'PENDIENTE'){ ?>
+                        <?php if($comprobante->estado === 'PREFACTURA'){ ?>
                         <div class="col-xs-2">
                             <div class="form-group">
                                 <label>Tipo Factura </label></br>
@@ -92,7 +94,15 @@ $paquete2=mysql_query($orden1);*/
                             </div>
                         </div>
                         <?php }else{ ?>
-                            <input type="hidden" name="tipoFact" value="prefact" />
+                            <!--<input type="hidden" name="tipoFact" value="prefact" />-->
+                            <div class="col-xs-2">
+                                <div class="form-group">
+                                    <label>Tipo Factura </label></br>
+                                    <input type="radio" name="tipoFact" value="prenormal" checked />PRE-NORMAL<br />      
+                                    <input type="radio" name="tipoFact" value="prefact" />PRE-FACTURA<br />
+                                                                  
+                                </div>
+                            </div>
                         <?php } ?>
                         <div class="col-xs-2">
                             <div class="form-group">
@@ -145,8 +155,8 @@ $paquete2=mysql_query($orden1);*/
                         <div class="col-xs-2">
                             <div class="form-group">
                                 <label>Moneda </label></br>
-                                <input type="radio" name="tipoCamb" value="COLONES" checked  /> COLONES<br />
-                                <input type="radio" name="tipoCamb" value="DOLARES" /> DOLARES<br />
+                                <input type="radio" name="moneda" value="COLONES" checked  /> COLONES<br />
+                                <input type="radio" name="moneda" value="DOLARES" /> DOLARES<br />
                                 
                             </div>
                         </div>
@@ -178,17 +188,19 @@ $paquete2=mysql_query($orden1);*/
                 
             </fieldset>
 
-            <?php } ?>
+            <?php  } ?>
 
 
             <ul id="facturador-detalle" class="list-group">
-                <?php foreach($comprobante->Detalle as $d): ?>
+                <?php 
+                $desc=0;
+                foreach($comprobante->Detalle as $d): ?>
                 <li class="list-group-item">
                     <input name="idProd" type="hidden" value="<?php echo $d->Producto->id; ?>" />
 
                     <div class="row">
                         <div class="col-xs-5">
-                            <?php echo $d->Producto->Nombre; ?>
+                            <?php echo $d->Producto->name; ?>
                         </div>
 
                         <div class="col-xs-1 text-right">
@@ -212,7 +224,7 @@ $paquete2=mysql_query($orden1);*/
                             Sub Total
                         </div>
                         <div class="col-xs-2">
-                            <b><?php echo number_format($comprobante->Total, 2); ?></b>
+                            <b><?php echo number_format($comprobante->SubTotal, 2); ?></b>
                         </div>
                     </div>
                 </li>
@@ -232,7 +244,7 @@ $paquete2=mysql_query($orden1);*/
                             Total <b>(C/.)</b>
                         </div>
                         <div class="col-xs-2">
-                            <b><?php echo number_format($comprobante->Total-$desc, 2); ?></b>
+                            <b><?php echo number_format($comprobante->Total, 2); ?></b>
                         </div>
                     </div>
                 </li>

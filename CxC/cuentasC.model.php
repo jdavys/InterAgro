@@ -7,7 +7,7 @@ class CuentasCModel
 	{
 		try
 		{
-			$this->pdo = new PDO('mysql:host=localhost;dbname=cuentasc', 'root', '123456');
+			$this->pdo = new PDO('mysql:host=localhost;dbname=factmenudo', 'root', '123456');
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);		        
 		}
 		catch(Exception $e)

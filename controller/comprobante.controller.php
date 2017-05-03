@@ -22,6 +22,7 @@ class ComprobanteController{
     }
     
     public function Crud(){
+
         require_once 'view/header.php';
         require_once 'view/comprobante/editar.php';
         require_once 'view/footer.php';
@@ -35,6 +36,27 @@ class ComprobanteController{
         require_once 'view/comprobante/ver.php';
         require_once 'view/footer.php';
     }
+
+    public function Modificar(){
+        
+        $comprobante = $this->model->Obtener($_REQUEST['id']);
+        require_once 'view/header.php';
+        require_once 'view/comprobante/modificar.php';
+        require_once 'view/footer.php';
+
+        
+    }
+
+    public function ModiDetaPre(){
+         $comprobante = $this->model->Obtener($_REQUEST['idC']);
+        if($comprobante==false){
+            require_once 'view/header.php';
+            require_once 'view/comprobante/index.php';
+            require_once 'view/footer.php';
+        }else{
+            require_once 'view/comprobante/pedido.php';
+        }
+    }
     
     public function Guardar()
     {
@@ -43,21 +65,52 @@ class ComprobanteController{
 
     }
 
+    public function EditarPre()
+    {
+
+        /*print_r(json_encode($this->model->EditarPre( $_POST ) ));*/
+        if($this->model->EditarPre( $_POST ) ){
+            require_once 'view/header.php';
+            require_once 'view/comprobante/index.php';
+            require_once 'view/footer.php';
+        }else{
+            require_once 'view/header.php';
+            require_once 'view/comprobante/index.php';
+            require_once 'view/footer.php';
+        }
+
+
+    }
+
     public function GuardaPreFactura()
     {
 
-        print_r(json_encode( $this->model->RegistraPreFactura( $_POST ) ));
+        print_r(json_encode( $this->model->RegistraPreFactura( $_POST )));
 
     }
     
+    public function EliminarProdDeta(){
+        $this->model->EliminarProdDeta($_REQUEST['id'],$_REQUEST['idProd']);
+        require_once 'view/header.php';
+        require_once 'view/footer.php';
+        header('Location: view/comprobante/modificar.php');
+    }
+
     public function Eliminar(){
         $this->model->Eliminar($_REQUEST['id']);
         header('Location: index.php');
     }
 
     public function EliminarF(){
-        $this->model->EliminarF($_REQUEST['id']);
-        header('Location: index.php');
+       if($this->model->EliminarF($_REQUEST['id'])){
+           require_once 'view/header.php';
+                       require_once 'view/comprobante/index.php';
+                       require_once 'view/footer.php';
+                   }else{
+                       require_once 'view/header.php';
+                       require_once 'view/comprobante/index.php';
+                       require_once 'view/footer.php';
+                   }
     }
     
     public function ClienteBuscar()

@@ -1,8 +1,7 @@
 <?php
 require_once 'model/database.php';
 
-$controller = 'comprobante';
-
+$controller = 'login';
 
 // Todo esta lógica hara el papel de un FrontController
 if(!isset($_REQUEST['c']))

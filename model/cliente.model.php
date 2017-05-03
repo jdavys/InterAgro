@@ -21,7 +21,7 @@ class ClienteModel
 		{
 			$result = array();
 
-			$stm = $this->pdo->prepare("SELECT * FROM cliente WHERE Nombre LIKE '%$criterio%' ORDER BY Nombre LIMIT 8");
+			$stm = $this->pdo->prepare("SELECT id,name as Nombre,address1 as Direccion,phone1 as RUC,tipo_cliente as Tipo  FROM person WHERE name LIKE '%$criterio%' and kind=1 ORDER BY name LIMIT 8");
 			$stm->execute();
 
 			return $stm->fetchAll(PDO::FETCH_OBJ);
@@ -31,4 +31,5 @@ class ClienteModel
 			die($e->getMessage());
 		}
 	}
+	
 }

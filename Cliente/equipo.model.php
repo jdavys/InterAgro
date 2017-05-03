@@ -7,7 +7,7 @@ class ClienteModel
 	{
 		try
 		{
-			$this->pdo = new PDO('mysql:host=localhost;dbname=facturador', 'root', '');
+			$this->pdo = new PDO('mysql:host=localhost;dbname=facturador', 'root', '123456');
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);		        
 		}
 		catch(Exception $e)
@@ -46,7 +46,36 @@ class ClienteModel
 			die($e->getMessage());
 		}
 	}
+	public function ListarC($valor)
+	{
+		try
+		{
+			$result = array();
 
+			$stm = $this->pdo->prepare("SELECT * FROM cliente where nombre LIKE '$valor%'");
+			$stm->execute();
+
+			foreach($stm->fetchAll(PDO::FETCH_OBJ) as $r)
+			{
+				$eq = new Cliente();
+
+				$eq->__SET('id', $r->id);
+				$eq->__SET('Nombre', $r->Nombre);
+				$eq->__SET('RUC', $r->RUC);
+				$eq->__SET('Direccion', $r->Direccion);
+				$eq->__SET('Agente', $r->Agente);
+				
+
+				$result[] = $eq;
+			}
+
+			return $result;
+		}
+		catch(Exception $e)
+		{
+			die($e->getMessage());
+		}
+	}
 	public function Obtener($id)
 	{
 		try 
